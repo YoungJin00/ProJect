@@ -56,7 +56,10 @@ namespace ChiliGames.VROffice
                     }
                     if (whiteboard == null) return;
                     //Send the rpc with the coordinates, pen size and color of marker in RGB.
-                    whiteboard.pv.RPC("DrawAtPosition", RpcTarget.AllBuffered, new float[] { touch.textureCoord.x, touch.textureCoord.y }, penSize, new float[]{color.r, color.g, color.b});
+                    whiteboard.pv.RPC("DrawAtPosition", RpcTarget.AllBuffered, 
+                        new float[] { touch.textureCoord.x, touch.textureCoord.y }, 
+                        penSize, 
+                        new float[]{color.r, color.g, color.b});
                 }
             }
             else if (whiteboard != null)

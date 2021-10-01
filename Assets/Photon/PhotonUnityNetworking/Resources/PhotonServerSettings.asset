@@ -52,6 +52,7 @@ MonoBehaviour:
   - SendMsg
   - SendMsgConnectionAll
   - SendMsgConnectionMaster
+  - RPC_SendWhiteboard
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

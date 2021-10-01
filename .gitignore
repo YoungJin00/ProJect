@@ -2,3 +2,7 @@
 obj
 Assembly-CSharp.csproj
 *.csproj
+Logs
+Packages
+ProjectSettings
+Temp

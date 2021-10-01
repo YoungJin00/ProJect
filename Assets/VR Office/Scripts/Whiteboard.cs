@@ -1,6 +1,11 @@
-﻿using System.Linq;
+﻿using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
+
+
+using System.Linq;
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 namespace ChiliGames.VROffice
 {
@@ -21,6 +26,7 @@ namespace ChiliGames.VROffice
         bool everyOthrFrame;
 
         [HideInInspector] public PhotonView pv;
+        private Texture2D receivedTexture;
 
         void Start()
         {
@@ -119,6 +125,15 @@ namespace ChiliGames.VROffice
             pv.RPC("RPC_ClearWhiteboard", RpcTarget.AllBuffered);
         }
 
+        bool IsLeftMouseButtonDown()
+        {
+#if ENABLE_INPUT_SYSTEM
+            return Mouse.current != null ? Mouse.current.leftButton.isPressed : false;
+#else
+            return Input.GetMouseButtonDown(0);
+#endif
+        }
+
         [PunRPC]
         public void RPC_ClearWhiteboard()
         {
@@ -127,7 +142,7 @@ namespace ChiliGames.VROffice
         }
 
         //This code below is for sending the whiteboard state to new players joining the room. This is causing lag so it is a WIP. You can still actiavate it but it will lag for 1 second the master client when somebody joins.
-        /*
+        
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             base.OnPlayerEnteredRoom(newPlayer);
@@ -149,6 +164,26 @@ namespace ChiliGames.VROffice
         void ApplyReceivedTexture()
         {
             GetComponent<Renderer>().material.mainTexture = receivedTexture;
-        }*/
+        }
+        private void Update()
+        {
+            if (IsLeftMouseButtonDown())
+            {
+                Debug.Log("MouseDown");
+                Debug.Log(string.Format("Mouse position x={0} y={1}",
+                          Mouse.current.position.x.ReadValue(),
+                          Mouse.current.position.y.ReadValue()));
+                Color color = Color.blue;
+                Vector2 pos = Camera.main.ScreenToViewportPoint(Mouse.current.position.ReadValue());
+                Debug.Log(string.Format("Main Mouse position x={0} y={1}",pos.x,pos.y));
+
+                //DrawAtPosition(new float[] { pos.x, pos.y }, 50, new float[] { color.r, color.g, color.b });
+
+                this.pv.RPC("DrawAtPosition", RpcTarget.AllBuffered,
+                    new float[] { 1.0f - pos.x, 1.0f - pos.y },
+                    50,
+                    new float[] { color.r, color.g, color.b });
+            }
+        }
     }
 }
